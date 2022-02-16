@@ -22,11 +22,9 @@ We also invite you to visit [Pavlo's GitHub account](https://github.com/pavlomoz
 
 Anomaly detection (Chandola et al., 2009) is a branch of machine learning which aims at identifying observations that exhibit abnormal behavior. Be it measurement errors, disease development, severe weather, production quality default(s) (items) or failed equipment, financial frauds or crisis events, their on-time identification, isolation and explanation constitute an important task in almost any branch of industry and science.
 
-La présentation et le travail de cet atelier se décompose selon les points suivants :
-1. Présentation des containers et de leurs avantages
-1. Containerisation d’une app utilisant le framework Streamlit
-1. Conseils et méthodes d’optimisation Docker
-1. Utilisation de docker-compose en phase de développement
-1. Déploiement de l’app dans le cloud
-1. Automatisation du déploiement
+During the workshops, the following topics were discussed:
+ - the concept of data depth in both functional and multivariate settings,
+ - review most common notion of the depth function (halfspace (Tukey, 1975), projection (Zuo & Sefling,2000), zonoid (Mosler, 2002), spatial depth (Koltchinskii, 1997); integrated (Claeskens et al., 2014) and curve (Lafaye De Micheaux et al., 2020) functional depths, functional isolation forest Staerman et al. (2019)
+ - focus on a number of real-world applications ranging from simulated situations to hurricane tracks and brain imaging.
+
 
