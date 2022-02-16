@@ -15,7 +15,8 @@ It took place for the first time in person and remotely on September 10, 2021 at
 To present the context of this workshop Pavlo made a Mastercraft video which you can watch [here](https://youtu.be/5Wxrg1yj3wc).
 <p align="center"> <a href="http://www.youtube.com/watch?feature=player_embedded&v=5Wxrg1yj3wc" target="_blank"><img src="http://img.youtube.com/vi/5Wxrg1yj3wc/0.jpg" alt="Pavlo's mastercraft" width="240" height="180" border="10" /></a> </p>
 
-Moreover, the three workshops were entirely filmed! You can find them here: [Part 1](https://www.youtube.com/watch?v=Y4DOQnv76cg&t=2354s), [Part 2](https://www.youtube.com/watch?v=ZhVqGqXt34o&t=2s) and Part 3 coming soon.
+Moreover, the three workshops were entirely filmed! You can find them here: [Part 1](https://www.youtube.com/watch?v=Y4DOQnv76cg&t=2354s), [Part 2](https://www.youtube.com/watch?v=ZhVqGqXt34o&t=2s) and Part 3 **coming soon**.
+
 We also invite you to visit [Pavlo's GitHub account](https://github.com/pavlomozharovskyi).
 
 ---
