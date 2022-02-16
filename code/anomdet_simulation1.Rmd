@@ -1,0 +1,170 @@
+---
+title: "Tutorial on anomaly detection, Part R: playaround"
+author: "Pavlo Mozharovskyi"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook on the tutorial 
+on "Anomaly detection" given on Monday the 12th of October 2020.
+
+# 1) Local outlier factor
+
+## 1.1) Generate (and plot) training data
+
+```{r}
+library(MASS)
+set.seed(1)
+Xnorm <- cbind(rnorm(50, 0.5, 0.25), rnorm(50, 0.5, 0.25))
+Xoutl <- mvrnorm(5, c(-0.75, 0.5), diag(2) * 0.01)
+X <- data.frame(rbind(Xnorm, Xoutl))
+plot(X)
+```
+
+## 1.2) Calculate the local outlier factor (LOF) and plot it
+
+```{r}
+library(DMwR)
+score1.lof <- lofactor(X, 10)
+par(mfrow=c(1, 2))
+plot(X)
+text(X[,1], X[,2], round(score1.lof, 2), pos = 4, cex = 0.8, offset = 0.5)
+plot(score1.lof, xlab = "Observation index", ylab = "LOF score")
+```
+
+# 2) One-class support vector machine
+
+## 2.1) Generate (more) data to test
+
+```{r}
+XnormTest <- cbind(rnorm(250, 0.5, 0.25), rnorm(250, 0.5, 0.25))
+XoutlTest1 <- mvrnorm(10, c(-0.75, 0.5), diag(2) * 0.01)
+XoutlTest2 <- mvrnorm(10, c(1.75, 0.5), diag(2) * 0.01)
+Xtest <- data.frame(rbind(XnormTest, XoutlTest1, XoutlTest2))
+par(mfrow=c(1, 1))
+plot(Xtest, pch = 18)
+points(X)
+```
+
+## 2.2) Train/test/visualize one-class support vector machine
+
+```{r}
+library(e1071)
+# Train the OC-SVM
+ocsvm1 <- svm(X, type = "one-classification", gamma = 0.25, nu = 0.5)
+resOcsvmTrain <- predict(ocsvm1, X, decision.values = TRUE)
+score0.ocsvm <- attr(resOcsvmTrain, "decision.values")
+resOcsvmTest <- predict(ocsvm1, Xtest, decision.values = TRUE)
+score1.ocsvm <- attr(resOcsvmTest, "decision.values")
+# Prepare colors
+palatte1 <- colorRampPalette(c("red", "blue"))(n = 1000)
+score.ocsvm.min <- min(score0.ocsvm, score1.ocsvm)
+score.ocsvm.max <- max(score0.ocsvm, score1.ocsvm)
+cls0.ocsvm <- palatte1[round((score0.ocsvm - score.ocsvm.min) / 
+                               (score.ocsvm.max - score.ocsvm.min) * 999) + 1]
+cls1.ocsvm <- palatte1[round((score1.ocsvm - score.ocsvm.min) / 
+                               (score.ocsvm.max - score.ocsvm.min) * 999) + 1]
+# Plot in color
+plot(rbind(X, Xtest), pch = c(rep(1, nrow(X)), rep(18, nrow(Xtest))), 
+     col = c(cls0.ocsvm, cls1.ocsvm))
+```
+
+```{r}
+# Plot score
+plot(c(-score0.ocsvm, -score1.ocsvm), 
+     xlab = "Observation index", ylab = "OC-SVM score")
+abline(v = nrow(X) + 0.5)
+abline(v = nrow(Xnorm) + 0.5, lty = 2)
+abline(v = nrow(X) + nrow(XnormTest) + 0.5, lty = 2)
+```
+
+# 3) Isolation forest
+
+```{r}
+library(solitude)
+# Train the isolation forest
+if1 <- isolationForest$new(sample_size = nrow(X))
+if1$fit(X)
+score0.if <- if1$predict(X)$anomaly_score
+score1.if <- if1$predict(Xtest)$anomaly_score
+# Prepare colors
+palatte1 <- colorRampPalette(c("blue", "red"))(n = 1000)
+score.if.min <- min(score0.if, score1.if)
+score.if.max <- max(score0.if, score1.if)
+cls0.if <- palatte1[round((score0.if - score.if.min) / 
+                            (score.if.max - score.if.min) * 999) + 1]
+cls1.if <- palatte1[round((score1.if - score.if.min) / 
+                            (score.if.max - score.if.min) * 999) + 1]
+# Plot in color
+plot(rbind(X, Xtest), pch = c(rep(1, nrow(X)), rep(18, nrow(Xtest))), 
+     col = c(cls0.if, cls1.if))
+```
+
+```{r}
+# Plot score
+plot(c(score0.if, score1.if), xlab = "Observation index", ylab = "IF score")
+abline(v = nrow(X) + 0.5)
+abline(v = nrow(Xnorm) + 0.5, lty = 2)
+abline(v = nrow(X) + nrow(XnormTest) + 0.5, lty = 2)
+```
+
+# 4) Data depth
+
+```{r}
+library(ddalpha)
+# Train the isolation forest
+score0.depthPr <- depth.projection(X, X)
+score1.depthPr <- depth.projection(Xtest, X)
+# Prepare colors
+palatte1 <- colorRampPalette(c("red", "blue"))(n = 1000)
+score.depthPr.min <- min(score0.depthPr, score1.depthPr)
+score.depthPr.max <- max(score0.depthPr, score1.depthPr)
+cls0.depthPr <- palatte1[round(
+  (score0.depthPr - score.depthPr.min) / 
+    (score.depthPr.max - score.depthPr.min) * 999) + 1]
+cls1.depthPr <- palatte1[round(
+  (score1.depthPr - score.depthPr.min) / 
+    (score.depthPr.max - score.depthPr.min) * 999) + 1]
+# Plot in color
+plot(rbind(X, Xtest), pch = c(rep(1, nrow(X)), rep(18, nrow(Xtest))), 
+     col = c(cls0.depthPr, cls1.depthPr))
+```
+
+```{r}
+# Plot score
+plot(1 - c(score0.depthPr, score1.depthPr), 
+     xlab = "Observation index", ylab = "Data depth score")
+abline(v = nrow(X) + 0.5)
+abline(v = nrow(Xnorm) + 0.5, lty = 2)
+abline(v = nrow(X) + nrow(XnormTest) + 0.5, lty = 2)
+```
+
+# 5) Anomalies in cars
+
+## 5.1) Create a data set with anomalies
+
+```{r}
+Ynorm <- cars
+# https://www.theaa.com/breakdown-cover/advice/stopping-distances
+anom1 <-  c(20,  6 / 0.305)
+anom2 <-  c(30, 14 / 0.305)
+anom3 <-  c(40, 24 / 0.305)
+anom4 <-  c(50, 38 / 0.305)
+anom5 <-  c(60, 55 / 0.305)
+anom6 <-  c(70, 75 / 0.305)
+# https://www.qld.gov.au/transport/safety/road-safety/driving-safely/stopping-distances
+anom7 <-  c(40 / 1.609,  9 / 0.305)
+anom8 <-  c(50 / 1.609, 14 / 0.305)
+anom9 <-  c(60 / 1.609, 20 / 0.305)
+anom10 <- c(70 / 1.609, 27 / 0.305)
+Yanom <- data.frame(rbind(anom1, anom2, anom3, anom4, anom5, anom6, 
+                          anom7, anom8, anom9, anom10))
+names(Yanom) <- c("speed", "dist")
+Y <- round(rbind(Ynorm, Yanom))
+plot(Y, col = c(rep("blue", nrow(Ynorm)), rep("red", nrow(Yanom))))
+```
+
+## 5.2) Save the data
+
+```{r}
+write.csv(Y, file = "carsanom.csv", row.names = FALSE)
+```
