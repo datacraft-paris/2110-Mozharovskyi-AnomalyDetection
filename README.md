@@ -17,7 +17,7 @@ To present the context of this workshop Pavlo made a Mastercraft video which you
 
 Moreover, the three workshops were entirely filmed! You can find them here: [Part 1](https://www.youtube.com/watch?v=Y4DOQnv76cg&t=2354s), [Part 2](https://www.youtube.com/watch?v=ZhVqGqXt34o&t=2s) and Part 3 **coming soon**.
 
-We also invite you to visit [Pavlo's GitHub account](https://github.com/pavlomozharovskyi).
+We also invite you to visit [Pavlo's GitHub account](https://github.com/pavlomozharovskyi) **and** his [website](https://perso.telecom-paristech.fr/mozharovskyi/) for more information about his research. 
 
 ---
 
